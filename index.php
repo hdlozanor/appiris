@@ -1,50 +1,82 @@
-<html>  
-<head>
-<link rel="stylesheet" href="css/inicio.css">
-</head>
-  <body> 
-    <header>
-		
-      <div class="todo">
-      <div class="titulo">Ingenieria De La Web</div>
-        <nav>
-          <a href="index.php">Inicio</a>
- 		  <a href="ejemplo2.php">Ejemplo2</a>
-          <a href="ejemplo3.php">Ejemplo3</a>
-          <a href="ejemplo4.php">Ejemplo4</a>
-        
-        </nav>
-      </div>
-    </header>
-    
-    <article class="todo">
-      <h1><b>Reglas CSS</b></h1><br>
-     
-      <p>Introducción</p><br>
-      
-<p align="justify">CSS define básicamente cómo se van a mostrar en la pantalla los elementos HTML. Para aplicar los estilos, CSS utiliza propiedades y valores. Esta construcción se llama declaración y la sintaxis incluye dos puntos después del nombre de la propiedad y un punto y coma para cerrar la línea.</p><br>
+<?php
+/*********************************************************************
+    index.php
 
-      <h5>Código 1:   Color: #FF0000;</h5><br>
+    Helpdesk landing page. Please customize it to fit your needs.
 
-<p><b>Declaración de propiedades CSS.</b></p><br>
-      
-<p align="justify">En el ejemplo del código 1, el nombre de la propiedad es color y el valor asignado a esta propiedad es #FF0000. Si esta propiedad se aplica posteriormente a un elemento HTML, el elemento se mostrara en pantalla en color rojo.
-Las propiedades pueden ser agrupadas usando llaves ( { ). Este grupo de una o más propiedades se denomina regla y es identificado por un nombre o un selector, que representa el elemento o grupo de elementos que se verán afectados por la regla.</p><br>
+    Peter Rotich <peter@osticket.com>
+    Copyright (c)  2006-2013 osTicket
+    http://www.osticket.com
 
-      <p>Podemos crear tantas reglas como queramos.<br><br>
-      <p>P {<br>
- Color: #FF0000;<br>
- Font-size: 24px;<br>
+    Released under the GNU General Public License WITHOUT ANY WARRANTY.
+    See LICENSE.TXT for details.
+
+    vim: expandtab sw=4 ts=4 sts=4:
+**********************************************************************/
+require('client.inc.php');
+
+require_once INCLUDE_DIR . 'class.page.php';
+
+$section = 'home';
+require(CLIENTINC_DIR.'header.inc.php');
+?>
+<div id="landing_page">
+<?php include CLIENTINC_DIR.'templates/sidebar.tmpl.php'; ?>
+<div class="main-content">
+<?php
+if ($cfg && $cfg->isKnowledgebaseEnabled()) { ?>
+<div class="search-form">
+    <form method="get" action="kb/faq.php">
+    <input type="hidden" name="a" value="search"/>
+    <input type="text" name="q" class="search" placeholder="<?php echo __('Search our knowledge base'); ?>"/>
+    <button type="submit" class="green button"><?php echo __('Search'); ?></button>
+    </form>
+</div>
+<?php } ?>
+<div class="thread-body">
+<?php
+    if($cfg && ($page = $cfg->getLandingPage()))
+        echo $page->getBodyWithImages();
+    else
+        echo  '<h1>'.__('Welcome to the Support Center').'</h1>';
+    ?>
+    </div>
+</div>
+<div class="clear"></div>
+
+<div>
+<?php
+if($cfg && $cfg->isKnowledgebaseEnabled()){
+    //FIXME: provide ability to feature or select random FAQs ??
+?>
+<br/><br/>
+<?php
+$cats = Category::getFeatured();
+if ($cats->all()) { ?>
+<h1><?php echo __('Featured Knowledge Base Articles'); ?></h1>
+<?php
 }
-      </p><br>
-      </p>
-    <h1>Declaración de reglas CSS</h1><br>
-    
-<p align="justify">En el ejemplo del código 2 usamos dos propiedades con sus correspondientes valores entre llaves (color y font-size). Esta regla se identifica con el nombre p. En este caso, el nombre de
-2 la regla es una referencia a los elementos p del documento. Si aplicamos esta regla a nuestro documento, el contenido de cada elemento p será de color rojo y un tamaño de
-    24px.</p>
-    </article>
-    
-    
-    </body>
-</html>
+
+    foreach ($cats as $C) { ?>
+    <div class="featured-category front-page">
+        <i class="icon-folder-open icon-2x"></i>
+        <div class="category-name">
+            <?php echo $C->getName(); ?>
+        </div>
+<?php foreach ($C->getTopArticles() as $F) { ?>
+        <div class="article-headline">
+            <div class="article-title"><a href="<?php echo ROOT_PATH;
+                ?>kb/faq.php?id=<?php echo $F->getId(); ?>"><?php
+                echo $F->getQuestion(); ?></a></div>
+            <div class="article-teaser"><?php echo $F->getTeaser(); ?></div>
+        </div>
+<?php } ?>
+    </div>
+<?php
+    }
+}
+?>
+</div>
+</div>
+
+<?php require(CLIENTINC_DIR.'footer.inc.php'); ?>
