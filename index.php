@@ -1,4 +1,5 @@
 <?php
+echo "Hello";
 /*********************************************************************
     index.php
     Helpdesk landing page. Please customize it to fit your needs.
