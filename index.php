@@ -5,4 +5,6 @@ echo $_SERVER['DBNAME']);
 echo $_SERVER['DBUSER']);
 echo $_SERVER['DBPASS']);
 
-echo "HELLOOOOO" ?>
+echo "HELLOOOOO";
+
+?>
